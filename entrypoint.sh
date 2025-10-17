@@ -1,11 +1,15 @@
 #!/bin/sh
 set -e
 
+# 🔧 Crear y asignar permisos a /var/lib/odoo/filestore
+echo "🔹 Ensuring Odoo filestore permissions..."
+mkdir -p /var/lib/odoo/filestore
+chown -R odoo:odoo /var/lib/odoo
+
 echo "🔹 Waiting for database..."
 while ! nc -z ${ODOO_DATABASE_HOST:-$PGHOST} ${ODOO_DATABASE_PORT:-$PGPORT} 2>&1; do sleep 1; done;
 echo "✅ Database is now available"
 
-# Usa las variables de Railway si no están definidas las de Odoo
 DB_HOST=${ODOO_DATABASE_HOST:-$PGHOST}
 DB_PORT=${ODOO_DATABASE_PORT:-$PGPORT}
 DB_USER=${ODOO_DATABASE_USER:-$PGUSER}
@@ -14,7 +18,6 @@ DB_NAME=${ODOO_DATABASE_NAME:-$PGDATABASE}
 
 echo "🔹 Using database: $DB_NAME"
 
-# Verificar si la base existe (Railway crea PGDATABASE automáticamente)
 DB_EXISTS=$(PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -p $DB_PORT -tAc "SELECT 1 FROM pg_database WHERE datname='${DB_NAME}';" || true)
 
 if [ -z "$DB_EXISTS" ] || [ "$DB_EXISTS" != "1" ]; then

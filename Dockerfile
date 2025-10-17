@@ -8,9 +8,7 @@ ENV LANG=${LOCALE}
 USER root
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends locales netcat-openbsd \
-    && locale-gen ${LOCALE} \
-    && mkdir -p /var/lib/odoo/filestore \
-    && chown -R odoo:odoo /var/lib/odoo
+    && locale-gen ${LOCALE}
 
 WORKDIR /app
 
