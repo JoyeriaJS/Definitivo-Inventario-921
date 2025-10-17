@@ -1,17 +1,19 @@
 #!/bin/sh
 set -e
 
-# --- Configuración del filestore (Railway no permite /var/lib/odoo) ---
-ODOO_DATA_DIR="/mnt/filestore"
+# --- Configuración del filestore ---
+ODOO_DATA_DIR="/home/odoo/filestore"
 export ODOO_DATA_DIR
 mkdir -p "$ODOO_DATA_DIR"
 chown -R odoo:odoo "$ODOO_DATA_DIR"
+echo "🔹 Using filestore path: $ODOO_DATA_DIR"
 
+# --- Esperar la base de datos ---
 echo "🔹 Waiting for database..."
 while ! nc -z ${ODOO_DATABASE_HOST} ${ODOO_DATABASE_PORT} 2>/dev/null; do sleep 1; done;
 echo "✅ Database is now available"
 
-# Variables para la conexión a la base de datos
+# --- Variables ---
 DB_HOST=${ODOO_DATABASE_HOST}
 DB_PORT=${ODOO_DATABASE_PORT}
 DB_USER=${ODOO_DATABASE_USER}
