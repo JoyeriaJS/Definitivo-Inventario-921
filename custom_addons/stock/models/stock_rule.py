@@ -27,6 +27,7 @@ class ProcurementException(Exception):
         self.procurement_exceptions = procurement_exceptions
 
 
+
 class StockRule(models.Model):
     """ A rule describe what a procurement should do; produce, buy, move, ... """
     _name = 'stock.rule'
