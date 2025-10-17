@@ -1,28 +1,23 @@
 FROM odoo:17.0
 
-# --- Locales ---
 ARG LOCALE=en_US.UTF-8
+
 ENV LANGUAGE=${LOCALE}
 ENV LC_ALL=${LOCALE}
 ENV LANG=${LOCALE}
 
-# --- Instalar dependencias básicas ---
-USER root
-RUN apt-get update -y && apt-get install -y --no-install-recommends \
-        locales \
-        netcat-openbsd \
-    && locale-gen ${LOCALE} \
-    && rm -rf /var/lib/apt/lists/*
+USER 0
 
-# --- Directorio de trabajo ---
+RUN apt-get -y update && apt-get install -y --no-install-recommends locales netcat-openbsd \
+    && locale-gen ${LOCALE}
+
 WORKDIR /app
 
-# --- Copiar entrypoint y addons ---
-COPY --chmod=755 entrypoint.sh /entrypoint.sh
+
+COPY --chmod=755 entrypoint.sh ./
+
 COPY ./custom_addons /mnt/custom_addons
 
-# --- Definir entrypoint ---
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/bin/sh"]
 
-# --- Ejecutar como usuario odoo (por seguridad) ---
-USER odoo
+CMD ["entrypoint.sh"]
